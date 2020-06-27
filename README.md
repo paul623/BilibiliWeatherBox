@@ -1,6 +1,6 @@
 # 网络天气时钟小电视
 
-本项目来自 [Network Weather Clock](https://gitee.com/xiaoxiaokai/Network-Weather-Clock)
+本项目来自 [Network Weather Clock](https://gitee.com/taijichuangke/bilibili_weather_clock)
 
 ## 更换展示的源
 
