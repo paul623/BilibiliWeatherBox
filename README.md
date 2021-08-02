@@ -86,3 +86,235 @@ http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/nodemcu-arduino-i
 原作者教程写的已经非常详细了！该库只是备份用，如有侵权请立刻联系我，我会删除该库。
 
 新玩具+1
+
+
+
+## 迁移施工
+
+### 实时天气预报
+
+S6
+
+```JSON
+{
+    "HeWeather6":[
+        {
+            "basic":{
+                "cid":"CN101191306",
+                "location":"Sucheng",
+                "parent_city":"Suqian",
+                "admin_area":"Jiangsu",
+                "cnty":"China",
+                "lat":"33.937725",
+                "lon":"118.278984",
+                "tz":"+8.00"
+            },
+            "update":{
+                "loc":"2021-08-01 22:42",
+                "utc":"2021-08-01 14:42"
+            },
+            "status":"ok",
+            "now":{
+                "cloud":"76",
+                "cond_code":"104",
+                "cond_txt":"Overcast",
+                "fl":"31",
+                "hum":"84",
+                "pcpn":"0.0",
+                "pres":"997",
+                "tmp":"28",
+                "vis":"6",
+                "wind_deg":"90",
+                "wind_dir":"E",
+                "wind_sc":"2",
+                "wind_spd":"9"
+            }
+        }
+    ]
+}
+```
+
+V7
+
+```JSON
+{
+    "code":"200",
+    "updateTime":"2021-08-01T22:42+08:00",
+    "fxLink":"http://hfx.link/1tux1",
+    "now":{
+        "obsTime":"2021-08-01T22:28+08:00",
+        "temp":"28",
+        "feelsLike":"31",
+        "icon":"154",
+        "text":"Overcast",
+        "wind360":"90",
+        "windDir":"E",
+        "windScale":"2",
+        "windSpeed":"9",
+        "humidity":"84",
+        "precip":"0.0",
+        "pressure":"997",
+        "vis":"6",
+        "cloud":"76",
+        "dew":"26"
+    },
+    "refer":{
+        "sources":[
+            "Weather China"
+        ],
+        "license":[
+            "no commercial use"
+        ]
+    }
+}
+
+```
+
+三日预报
+
+```json
+{
+    "code":"200",
+    "updateTime":"2021-08-01T22:35+08:00",
+    "fxLink":"http://hfx.link/1tux1",
+    "daily":[
+        {
+            "fxDate":"2021-08-01",
+            "sunrise":"05:18",
+            "sunset":"19:08",
+            "moonrise":"23:58",
+            "moonset":"14:02",
+            "moonPhase":"Waning crescent",
+            "tempMax":"33",
+            "tempMin":"25",
+            "iconDay":"101",
+            "textDay":"Cloudy",
+            "iconNight":"305",
+            "textNight":"Light Rain",
+            "wind360Day":"148",
+            "windDirDay":"SE",
+            "windScaleDay":"1-2",
+            "windSpeedDay":"7",
+            "wind360Night":"45",
+            "windDirNight":"NE",
+            "windScaleNight":"1-2",
+            "windSpeedNight":"3",
+            "humidity":"93",
+            "precip":"0.0",
+            "pressure":"998",
+            "vis":"23",
+            "cloud":"16",
+            "uvIndex":"11"
+        },
+        {
+            "fxDate":"2021-08-02",
+            "sunrise":"05:19",
+            "sunset":"19:08",
+            "moonrise":"00:00",
+            "moonset":"14:02",
+            "moonPhase":"Waning crescent",
+            "tempMax":"30",
+            "tempMin":"25",
+            "iconDay":"305",
+            "textDay":"Light Rain",
+            "iconNight":"101",
+            "textNight":"Cloudy",
+            "wind360Day":"45",
+            "windDirDay":"NE",
+            "windScaleDay":"1-2",
+            "windSpeedDay":"3",
+            "wind360Night":"45",
+            "windDirNight":"NE",
+            "windScaleNight":"1-2",
+            "windSpeedNight":"3",
+            "humidity":"95",
+            "precip":"4.7",
+            "pressure":"1002",
+            "vis":"24",
+            "cloud":"78",
+            "uvIndex":"6"
+        },
+        {
+            "fxDate":"2021-08-03",
+            "sunrise":"05:19",
+            "sunset":"19:07",
+            "moonrise":"00:31",
+            "moonset":"14:59",
+            "moonPhase":"Waning crescent",
+            "tempMax":"31",
+            "tempMin":"26",
+            "iconDay":"101",
+            "textDay":"Cloudy",
+            "iconNight":"101",
+            "textNight":"Cloudy",
+            "wind360Day":"45",
+            "windDirDay":"NE",
+            "windScaleDay":"1-2",
+            "windSpeedDay":"3",
+            "wind360Night":"90",
+            "windDirNight":"E",
+            "windScaleNight":"1-2",
+            "windSpeedNight":"3",
+            "humidity":"96",
+            "precip":"0.0",
+            "pressure":"1003",
+            "vis":"24",
+            "cloud":"7",
+            "uvIndex":"10"
+        }
+    ],
+    "refer":{
+        "sources":[
+            "Weather China"
+        ],
+        "license":[
+            "no commercial use"
+        ]
+    }
+}
+
+
+```
+
+```c++
+void HeFeng::fans(HeFengCurrentData *data, String id) {  //获取粉丝数
+  std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
+  client->setInsecure();
+  HTTPClient https;
+  //String url = "https://api.bilibili.com/x/relation/stat?vmid=" + id;
+  //https://api.spencerwoo.com/substats/?source=zhihu&queryKey=
+  String url = "https://api.spencerwoo.com/substats?source=coolapk&queryKey=" + id;
+  Serial.print("[HTTPS] begin...zhihu\n");
+  if (https.begin(*client, url)) {  // HTTPS
+    // start connection and send HTTP header
+    int httpCode = https.GET();
+    // httpCode will be negative on error
+    if (httpCode > 0) {
+      // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+
+      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+        String payload = https.getString();
+        Serial.println(payload);
+        DynamicJsonDocument  jsonBuffer(2048);
+        deserializeJson(jsonBuffer, payload);
+        JsonObject root = jsonBuffer.as<JsonObject>();
+
+        //String follower = root["data"]["follower"];
+        //totalSubs
+        String follower = root["data"]["totalSubs"];
+        data->follower = follower;
+      }
+    } else {
+      Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+      data->follower = "-1";
+    }
+
+    https.end();
+  } else {
+    Serial.printf("[HTTPS] Unable to connect\n");
+    data->follower = "-1";
+  }
+}
+```
+

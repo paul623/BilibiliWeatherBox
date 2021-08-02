@@ -1,3 +1,5 @@
+#include <CustomWiFiManager.h>
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
@@ -26,9 +28,9 @@ const char* WIFI_SSID = "xiaokai";  //填写你的WIFI名称及密码
 const char* WIFI_PWD = "12345678k";
 
 //const char* BILIBILIID = "11893828";  //填写你的B站账号
-const char* BILIBILIID = "zhu-bao-luo-29";  //填写你的知乎账号
-
-const char* HEFENG_KEY = "26855517dd3c48359d792ca9b32aab7e";//填写你的和风天气秘钥 cb40a8606b6046dca489c7056fb529aa
+//const char* BILIBILIID = "zhu-bao-luo-29";  //填写你的知乎账号
+const char* BILIBILIID = "1258736";//酷安
+const char* HEFENG_KEY = "你的！";//填写你的和风天气秘钥 cb40a8606b6046dca489c7056fb529aa
 const char* HEFENG_LOCATION = "CN101191306";//填写你的城市ID,可到https://where.heweather.com/index.html查询
 //const char* HEFENG_LOCATION = "auto_ip";//自动IP定位
 
@@ -90,10 +92,11 @@ void setReadyForWeatherUpdate();
 //添加框架
 //此数组保留指向所有帧的函数指针
 //框架是从右向左滑动的单个视图
-FrameCallback frames[] = { drawDateTime, drawCurrentWeather, drawForecast };
+//FrameCallback frames[] = { drawDateTime, drawCurrentWeather, drawForecast };
 //页面数量
-int numberOfFrames = 3;
-
+FrameCallback frames[] = { drawDateTime, drawCurrentWeather, drawForecast };
+//int numberOfFrames = 3;
+int numberOfFrames = 2;
 OverlayCallback overlays[] = { drawHeaderOverlay }; //覆盖回调函数
 int numberOfOverlays = 1;  //覆盖数
 
@@ -174,46 +177,6 @@ void loop() {
   
 }
 
-//void wificonnect() {  //WIFI密码连接，Web配网请注释
-//  WiFi.begin(WIFI_SSID, WIFI_PWD);
-//  while (WiFi.status() != WL_CONNECTED) {
-//    Serial.print('.');
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_5);
-//    display.display();
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_6);
-//    display.display();
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_7);
-//    display.display();
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_8);
-//    display.display();
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_1);
-//    display.display();
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_2);
-//    display.display();
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_3);
-//    display.display();
-//    delay(80);
-//    display.clear();
-//    display.drawXbm(34, 0, bili_Logo_width, bili_Logo_height, bili_Logo_4);
-//    display.display();
-//  }
-//  Serial.println("");
-//  delay(500);
-//}
 
 void webconnect() {  ////Web配网，密码直连将其注释
   display.clear();

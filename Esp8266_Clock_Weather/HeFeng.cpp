@@ -7,13 +7,46 @@
 HeFeng::HeFeng() {
 }
 
+void HeFeng::fansBi(HeFengCurrentData *data, String id) {  //获取粉丝数
+  std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
+  client->setInsecure();
+  HTTPClient https;
+  String url = "https://api.bilibili.com/x/relation/stat?vmid=" + id;
+  Serial.print("[HTTPS] begin...bilibili\n");
+  if (https.begin(*client, url)) {  // HTTPS
+    // start connection and send HTTP header
+    int httpCode = https.GET();
+    // httpCode will be negative on error
+    if (httpCode > 0) {
+      // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+
+      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+        String payload = https.getString();
+        Serial.println(payload);
+        DynamicJsonDocument  jsonBuffer(2048);
+        deserializeJson(jsonBuffer, payload);
+        JsonObject root = jsonBuffer.as<JsonObject>();
+
+        String follower = root["data"]["follower"];
+        data->follower = follower;
+      }
+    } else {
+      Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+      data->follower = "-1";
+    }
+
+    https.end();
+  } else {
+    Serial.printf("[HTTPS] Unable to connect\n");
+    data->follower = "-1";
+  }
+}
 void HeFeng::fans(HeFengCurrentData *data, String id) {  //获取粉丝数
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
   client->setInsecure();
   HTTPClient https;
-  //String url = "https://api.bilibili.com/x/relation/stat?vmid=" + id;
-  //https://api.spencerwoo.com/substats/?source=zhihu&queryKey=
-  String url = "https://api.spencerwoo.com/substats/?source=zhihu&queryKey=" + id;
+  String url = "https://api.spencerwoo.com/substats?source=coolapk&queryKey=" + id;
   Serial.print("[HTTPS] begin...zhihu\n");
   if (https.begin(*client, url)) {  // HTTPS
     // start connection and send HTTP header
@@ -46,7 +79,6 @@ void HeFeng::fans(HeFengCurrentData *data, String id) {  //获取粉丝数
     data->follower = "-1";
   }
 }
-
 void HeFeng::doUpdateCurr(HeFengCurrentData *data, String key, String location) {  //获取天气
 
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);

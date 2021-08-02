@@ -29,4 +29,5 @@ class HeFeng {
     void doUpdateCurr(HeFengCurrentData *data, String key, String location);
     void doUpdateFore(HeFengForeData *data, String key, String location);
     void fans(HeFengCurrentData *data, String id);
+    void fansBi(HeFengCurrentData *data, String id);
 };
