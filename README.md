@@ -2,6 +2,14 @@
 
 本项目来自 [Network Weather Clock](https://gitee.com/taijichuangke/bilibili_weather_clock)
 
+
+
+
+
+### 测试
+
+2022年4月15日
+
 ## 已知问题
 
 目前三日预告解析失败，自己手动获取没问题，目前不知道哪里出错了。
@@ -34,11 +42,11 @@ SDC IO2
 
 SDA IO0
 
-| 绿色 | GND  |      |
-| ---- | ---- | ---- |
-| 黄色 | VCC  |      |
-| 紫色 | SCL  | IO2  |
-| 黑色 | SDA  | IO0  |
+| 绿色  | GND |     |
+| --- | --- | --- |
+| 黄色  | VCC |     |
+| 紫色  | SCL | IO2 |
+| 黑色  | SDA | IO0 |
 
 ## ESP8266 TTL
 
@@ -55,8 +63,6 @@ const int SDA_PIN = 0;  //引脚连接（原芯片GPIO0 口，对应显示屏的
 const int SDC_PIN = 2;  //（原芯片GPIO2 口，对应显示屏的D1口，开发板上的D3口）
 ```
 
-
-
 oled显示屏购买
 
 注意要买四引脚的（IIS连接！！！）
@@ -70,12 +76,10 @@ oled显示屏购买
     VCC          3.3V或者5V
     CLK（D0）   接D4
     DIN（D1）   接D3
-    RES 		接高
+    RES         接高
     D/C         接地
     CS          接地
 ```
-
-
 
 arduino ide for esp的教程
 
@@ -86,8 +90,6 @@ http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/nodemcu-arduino-i
 原作者教程写的已经非常详细了！该库只是备份用，如有侵权请立刻联系我，我会删除该库。
 
 新玩具+1
-
-
 
 ## 迁移施工
 
@@ -317,4 +319,3 @@ void HeFeng::fans(HeFengCurrentData *data, String id) {  //获取粉丝数
   }
 }
 ```
-
